@@ -3,7 +3,7 @@ name: Deploy Next.js App to EC2
 on:
   push:
     branches:
-      - main # You can change this to your desired branch name
+      - master # You can change this to your desired branch name
 
 jobs:
   deploy:
