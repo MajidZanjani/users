@@ -48,5 +48,5 @@ jobs:
           ssh-add private_key.pem
 
           # Deploy the static files to EC2
-          scp -o StrictHostKeyChecking=no -i private_key.pem -r out/* $EC2_USER@$EC2_HOST:/var/www/wordpress/
+          sudo scp -o StrictHostKeyChecking=no -i private_key.pem -r out/* $EC2_USER@$EC2_HOST:/var/www/wordpress/
           ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST 'sudo systemctl restart apache2'
