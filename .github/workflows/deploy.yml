@@ -35,8 +35,8 @@ jobs:
           sudo apt-get install -y openssh-client
 
           # Write the SSH private key to a file and set the correct permissions
-          echo "$PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
+          sudo echo "$PRIVATE_KEY" > private_key.pem
+          sudo chmod 600 private_key.pem
 
           # Add the private key to the SSH agent
           eval $(ssh-agent -s)
