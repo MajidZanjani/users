@@ -3,7 +3,7 @@ name: Deploy Next.js App to EC2
 on:
   push:
     branches:
-      - master # Change this to your desired branch name
+      - master # You can change this to your desired branch name
   workflow_dispatch:
 
 jobs:
@@ -15,17 +15,18 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version: "20" # Change to a valid and supported Node.js version
+          node-version: "22"
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
 
       - name: Build the app
         run: npm run build
 
-      - name: Set up SSH key and deploy to EC2
+      - name: Deploy to EC2
         env:
           PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }} # SSH private key for EC2
           EC2_USER: "ubuntu" # Default user for Ubuntu-based EC2
@@ -34,16 +35,18 @@ jobs:
           # Install SSH client
           sudo apt-get install -y openssh-client
 
-          # Write the SSH private key to a file and set the correct permissions
-          sudo echo "$PRIVATE_KEY" > private_key.pem
-          sudo chmod 600 private_key.pem
+          # Create private key file with correct format
+          echo "-----BEGIN RSA PRIVATE KEY-----" > private_key.pem
+          echo "$PRIVATE_KEY" >> private_key.pem
+          echo "-----END RSA PRIVATE KEY-----" >> private_key.pem
 
-          # Add the private key to the SSH agent
+          # Set permissions for the private key
+          chmod 600 private_key.pem
+
+          # Add SSH key to SSH agent
           eval $(ssh-agent -s)
           ssh-add private_key.pem
 
-          # Copy the built files to your EC2 instance
+          # Deploy the static files to EC2
           scp -o StrictHostKeyChecking=no -i private_key.pem -r out/* $EC2_USER@$EC2_HOST:/var/www/wordpress/
-
-          # Restart Apache to serve the app (modify if necessary for your server setup)
-          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST 'sudo systemctl restart nginx'
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST 'sudo systemctl restart apache2'
