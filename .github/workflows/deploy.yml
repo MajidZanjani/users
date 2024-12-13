@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master # You can change this to your desired branch name
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -16,16 +17,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "16"
+          node-version: "22"
 
       - name: Install dependencies
         run: |
           npm install
 
-      - name: Build and export the app
-        run: |
-          npm run build
-          npm run export
+      - name: Build the app
+        run: npm run build
 
       - name: Deploy to EC2
         env:
