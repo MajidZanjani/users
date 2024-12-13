@@ -43,7 +43,7 @@ jobs:
           ssh-add private_key.pem
 
           # Copy the built files to your EC2 instance
-          scp -o StrictHostKeyChecking=no -i private_key.pem -r out/* $EC2_USER@$EC2_HOST:/var/www/your-app-directory/
+          scp -o StrictHostKeyChecking=no -i private_key.pem -r out/* $EC2_USER@$EC2_HOST:/var/www/wordpress/
 
           # Restart Apache to serve the app (modify if necessary for your server setup)
-          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST 'sudo systemctl restart apache2'
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST 'sudo systemctl restart nginx'
